@@ -15,8 +15,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+//public use so that external crates will be able to use contained macros
+pub use cpu_time;
+
 /*
-    REQUIRES cpu-time = "1.0.0" to be added to cargo dependencies
     returns a std::time::Duration which contains the CPU time it took for the function to be 
     executed
 
@@ -32,7 +34,7 @@ macro_rules! cpu_time_func{
 
     ($func: ident) =>{
         {
-            let point = ::cpu_time::ThreadTime::now();
+            let point = $crate::cpu_time::ThreadTime::now();
             $func();
             point.elapsed()
         }
@@ -40,7 +42,7 @@ macro_rules! cpu_time_func{
    
     ($func: ident,  $($y:expr),+) =>{
         {
-            let point = ::cpu_time::ThreadTime::now();
+            let point = $crate::cpu_time::ThreadTime::now();
             $func($($y,)*);
             point.elapsed()
         }
