@@ -81,3 +81,66 @@ mod cpu_time_func_tests{
     }
 }
 
+
+/*
+    returns a std::time::Duration which contains the Wall Time it took for the function to be 
+    executed
+
+    invoked using the name of the function you wish to time and an optional parameter list 
+    for the function
+
+    ex:
+    let _ = wall_time_func!(foo);
+    let _ = wall_time_func!(foo, 1, "hello", 1+1);
+*/
+#[macro_export]
+macro_rules! wall_time_func{
+
+    ($func: ident) =>{
+        {
+            let point = ::std::time::Instant::now();
+            $func();
+            point.elapsed()
+        }
+    };
+   
+    ($func: ident,  $($y:expr),+) =>{
+        {
+            let point = ::std::time::Instant::now();
+            $func($($y,)*);
+            point.elapsed()
+        }
+    }
+}
+
+#[cfg(test)]
+mod wall_time_func_tests{
+
+
+    fn foo(){
+    }
+
+    #[test]
+    fn test_no_parameters(){
+        let _ = wall_time_func!(foo);
+    }
+
+    fn bar(_:i32){
+
+    }
+
+    #[test]
+    fn test_one_parameter(){
+        let _ = wall_time_func!(bar, 32);
+    }
+
+    fn baz(_:i32, _:&str, _:i64){
+
+    }
+
+    #[test]
+    fn test_many_parameters(){
+        let _ = wall_time_func!(baz, 1, "hello", 1+1);
+    }
+}
+
